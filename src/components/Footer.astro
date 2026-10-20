@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { site, wa, tel, msgGeral } from '../data/site';
+import { areas } from '../data/areas';
+import logo from '../assets/img/logo.png';
+---
+<footer class="ftr">
+  <div class="wrap ftr-grid">
+    <div>
+      <Image src={logo} alt={site.name} width={200} />
+      <p>Advocacia criminal com plantão 24 horas em Piraquara, Curitiba e Região Metropolitana.</p>
+    </div>
+    <nav aria-label="Áreas de atuação">
+      <h2>Áreas de atuação</h2>
+      <ul class="ftr-links">
+        {areas.map((a) => <li><a href={`/atuacao/${a.slug}/`}>{a.t}</a></li>)}
+      </ul>
+    </nav>
+    <div>
+      <h2>Contato</h2>
+      <ul>
+        <li><Icon name="phone" /><a href={tel} data-track="rodape">{site.phoneDisplay}</a></li>
+        <li><Icon name="mail" /><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><Icon name="pin" /><a href={site.mapsUrl} target="_blank" rel="noopener">{site.address.street}, {site.address.district}, {site.address.city}/{site.address.state}</a></li>
+        <li><Icon name="instagram" /><a href={site.instagram} target="_blank" rel="noopener">@meirelis_</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap ftr-bottom">
+    <span>© {new Date().getFullYear()} {site.name} · {site.oab}</span>
+    <span>Conteúdo de caráter meramente informativo.</span>
+  </div>
+</footer>
+
+<!-- Barra fixa no celular -->
+<div class="mbar">
+  <a class="btn btn-ghost" href={tel} data-track="barra-fixa"><Icon name="phone" />Ligar</a>
+  <a class="btn btn-whats" href={wa(msgGeral)} target="_blank" rel="noopener" data-track="barra-fixa"><Icon name="whatsapp" />WhatsApp 24h</a>
+</div>
+
+<style>
+  .ftr { border-top: 1px solid var(--line); padding: 56px 0 120px; font-size: 15px; color: var(--ink-2); }
+  .ftr-grid { display: grid; grid-template-columns: 1.1fr .9fr 1.2fr; gap: 40px; }
+  .ftr-grid img { width: 180px; margin-bottom: 14px; }
+  .ftr h2 { font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .ftr ul { list-style: none; display: grid; gap: 12px; }
+  .ftr-links { gap: 8px; }
+  .ftr li { display: flex; gap: 12px; align-items: start; }
+  .ftr li :global(svg) { width: 18px; height: 18px; color: var(--gold); flex: none; margin-top: 3px; }
+  .ftr a:hover { color: var(--ink); }
+  .ftr li a { word-break: break-word; }
+  .ftr-bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-3); }
+  @media (min-width: 900px) { .ftr { padding-bottom: 56px; } }
+  @media (max-width: 900px) { .ftr-grid { grid-template-columns: 1fr 1fr; } .ftr-grid > div:first-child { grid-column: 1 / -1; } }
+  @media (max-width: 600px) { .ftr-grid { grid-template-columns: 1fr; } }
+
+  .mbar { display: none; }
+  @media (max-width: 899px) {
+    .mbar { display: grid; grid-template-columns: 1fr 1.6fr; gap: 10px; position: fixed; inset: auto 0 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: rgba(11, 23, 36, .92); backdrop-filter: blur(14px); border-top: 1px solid var(--line); }
+    .mbar .btn { min-height: 52px; padding: 0 12px; }
+  }
+</style>

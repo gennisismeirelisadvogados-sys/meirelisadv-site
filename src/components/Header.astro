@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import { site, wa, msgGeral } from '../data/site';
+import logo from '../assets/img/logo.png';
+---
+<header class="hdr" id="topo">
+  <div class="wrap hdr-in">
+    <a href="/" class="brand" aria-label={site.name}>
+      <Image src={logo} alt={site.name} width={200} loading="eager" />
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a href="/#atuacao">Atuação</a>
+      <a href="/#tv">Na TV</a>
+      <a href="/#sobre">Sobre</a>
+      <a href="/#depoimentos">Avaliações</a>
+      <a href="/#faq">Dúvidas</a>
+    </nav>
+    <div class="hdr-cta">
+      <span class="live"><i></i>Plantão 24h</span>
+      <a class="btn btn-whats btn-sm" href={wa(msgGeral)} target="_blank" rel="noopener" data-track="header">
+        <Icon name="whatsapp" />Falar agora
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const hdr = document.querySelector('.hdr')!;
+  const onScroll = () => hdr.classList.toggle('scrolled', scrollY > 12);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+
+<style>
+  .hdr { position: fixed; inset: 0 0 auto; z-index: 50; transition: background .25s, border-color .25s, backdrop-filter .25s; border-bottom: 1px solid transparent; }
+  .hdr.scrolled { background: rgba(11, 23, 36, .82); backdrop-filter: blur(14px); border-color: var(--line); }
+  .hdr-in { display: flex; align-items: center; gap: 32px; height: 76px; }
+  .brand img { width: 176px; height: auto; }
+  .nav { display: flex; gap: 28px; margin-left: auto; font-size: 15px; color: var(--ink-2); }
+  .nav a:hover { color: var(--ink); }
+  .hdr-cta { display: flex; align-items: center; gap: 18px; }
+  @media (max-width: 1020px) { .nav { display: none; } .hdr-cta { margin-left: auto; } }
+  @media (max-width: 640px) { .hdr-cta .live { display: none; } .brand img { width: 150px; } }
+</style>

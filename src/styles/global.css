@@ -1,0 +1,97 @@
+:root {
+  --bg: #0B1724;
+  --bg-2: #0F1F30;
+  --bg-3: #142739;
+  --ink: #F3F0E9;
+  --ink-2: #B9BFC7;
+  --ink-3: #7D8C9C;
+  --gold: #D2A866;
+  --gold-2: #E8CB8E;
+  --gold-soft: rgba(210, 168, 102, .12);
+  --gold-line: rgba(210, 168, 102, .32);
+  --line: rgba(255, 255, 255, .08);
+  --line-2: rgba(255, 255, 255, .14);
+  --whats: #25D366;
+  --whats-d: #1DA851;
+  --r: 14px;
+  --r-lg: 22px;
+  --maxw: 1180px;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Archivo Variable', system-ui, -apple-system, sans-serif;
+  --shadow: 0 30px 80px -30px rgba(0, 0, 0, .8);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 12px;
+  font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--gold);
+}
+.eyebrow::before { content: ''; width: 28px; height: 1px; background: var(--gold); }
+
+.h-display { font-family: var(--font-display); font-weight: 600; line-height: 1.04; letter-spacing: -.01em; }
+.h-sec { font-family: var(--font-display); font-weight: 600; font-size: clamp(34px, 4.4vw, 52px); line-height: 1.08; margin-top: 14px; }
+.h-sec em, .h-display em { font-style: italic; color: var(--gold-2); }
+.lead { color: var(--ink-2); font-size: 18px; max-width: 620px; margin-top: 16px; }
+
+section { padding: 104px 0; position: relative; }
+@media (max-width: 760px) { section { padding: 72px 0; } }
+.sec-head { max-width: 720px; margin-bottom: 52px; }
+.sec-head.center { margin-inline: auto; text-align: center; }
+.sec-head.center .lead { margin-inline: auto; }
+.sec-head.center .eyebrow::after { content: ''; width: 28px; height: 1px; background: var(--gold); }
+
+/* Botões */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 0 28px; border-radius: 999px;
+  font-weight: 600; font-size: 16px; letter-spacing: .01em;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s;
+  white-space: nowrap;
+}
+.btn svg { width: 20px; height: 20px; flex: none; }
+.btn:hover { transform: translateY(-2px); }
+.btn-whats { background: var(--whats); color: #062312; box-shadow: 0 14px 40px -14px rgba(37, 211, 102, .7); }
+.btn-whats:hover { background: #2fe073; box-shadow: 0 18px 48px -14px rgba(37, 211, 102, .85); }
+.btn-ghost { border: 1px solid var(--line-2); background: rgba(255, 255, 255, .03); }
+.btn-ghost:hover { border-color: var(--gold-line); background: var(--gold-soft); }
+.btn-gold { background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #1A1206; }
+
+/* Status de plantão */
+.live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-2); }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: var(--whats); position: relative; }
+.live i::after {
+  content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--whats);
+  animation: ping 1.8s ease-out infinite;
+}
+@keyframes ping { from { transform: scale(.6); opacity: .9; } to { transform: scale(1.8); opacity: 0; } }
+
+/* Revelar ao rolar */
+.js .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+  .live i::after { animation: none; }
+  .btn:hover { transform: none; }
+}
+
+.btn-sm { min-height: 44px; padding: 0 20px; font-size: 15px; }
+.btn-lg { min-height: 60px; padding: 0 30px; font-size: 17px; }

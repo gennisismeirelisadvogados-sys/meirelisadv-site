@@ -1,0 +1,77 @@
+---
+import '@fontsource/cormorant-garamond/500.css';
+import '@fontsource/cormorant-garamond/600.css';
+import '@fontsource/cormorant-garamond/600-italic.css';
+import '@fontsource-variable/archivo';
+import '../styles/global.css';
+import { site } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  schema?: object[];
+}
+const { title, description, schema = [] } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#0B1724" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.jpg', Astro.site).href} />
+    {schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+
+    <!-- Google Ads: carregado após a página, sem atrasar a primeira pintura -->
+    <script is:inline define:vars={{ adsId: site.adsId }}>
+      window.dataLayer = window.dataLayer || [];
+      // define:vars envolve o script numa função, então gtag precisa ir para window
+      const gtag = (window.gtag = function () { dataLayer.push(arguments); });
+      gtag('js', new Date());
+      gtag('config', adsId);
+      addEventListener('load', () => {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=' + adsId;
+        document.head.appendChild(s);
+      });
+    </script>
+  </head>
+  <body>
+    <slot />
+
+    <script>
+      // Animação de entrada só com JS ativo; se o observer não disparar, mostra tudo após 2,5 s
+      const els = document.querySelectorAll('.reveal');
+      document.documentElement.classList.add('js');
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries) if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      }, { rootMargin: '0px 0px -8% 0px' });
+      els.forEach((el) => io.observe(el));
+      setTimeout(() => els.forEach((el) => el.classList.add('in')), 2500);
+    </script>
+
+    <!-- Rastreamento de conversões: todo link com data-track vira evento -->
+    <script is:inline define:vars={{ adsId: site.adsId, label: site.adsConversionLabel }}>
+      document.addEventListener('click', (e) => {
+        const a = e.target.closest('[data-track]');
+        if (!a) return;
+        const channel = a.href.startsWith('tel:') ? 'telefone' : 'whatsapp';
+        const params = { channel, placement: a.dataset.track, intent: a.dataset.intent || 'geral' };
+        gtag('event', 'generate_lead', params);
+        if (label) gtag('event', 'conversion', { send_to: adsId + '/' + label, ...params });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,208 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Icon from '../../components/Icon.astro';
+import { site, wa, tel, cidades, legalServiceSchema, faqSchema } from '../../data/site';
+import { areas, type Area } from '../../data/areas';
+import drAtendimento from '../../assets/img/dr-atendimento.jpg';
+
+export function getStaticPaths() {
+  return areas.map((area) => ({ params: { slug: area.slug }, props: { area } }));
+}
+
+const { area } = Astro.props as { area: Area };
+const outras = areas.filter((a) => a.slug !== area.slug);
+const url = `https://www.meirelisadv.com.br/atuacao/${area.slug}/`;
+
+const schema = [
+  legalServiceSchema([area.t]),
+  faqSchema(area.faq),
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Início', item: 'https://www.meirelisadv.com.br/' },
+      { '@type': 'ListItem', position: 2, name: area.t, item: url },
+    ],
+  },
+];
+---
+<Base title={`${area.seoTitle} | ${site.name}`} description={area.seoDesc} schema={schema}>
+  <Header />
+
+  <main>
+    <section class="a-hero">
+      <div class="wrap a-hero-grid">
+        <div>
+          <nav class="crumbs" aria-label="Você está em">
+            <a href="/">Início</a><span>/</span><a href="/#atuacao">Atuação</a><span>/</span>{area.t}
+          </nav>
+          <span class="eyebrow">Advocacia criminal · Plantão 24h</span>
+          <h1 class="h-display a-h1" set:html={area.h1} />
+          <p class="a-intro">{area.intro}</p>
+          <div class="a-ctas">
+            <a class="btn btn-whats btn-lg" href={wa(area.msg)} target="_blank" rel="noopener" data-track="area-hero" data-intent={area.slug}>
+              <Icon name="whatsapp" />Falar no WhatsApp agora
+            </a>
+            <a class="btn btn-ghost btn-lg" href={tel} data-track="area-hero" data-intent={area.slug}>
+              <Icon name="phone" />{site.phoneDisplay}
+            </a>
+          </div>
+          <ul class="trust">
+            <li><Icon name="shield" />{site.oab}</li>
+            <li><Icon name="clock" />Atendimento 24h</li>
+            <li><Icon name="lock" />Sigilo absoluto</li>
+          </ul>
+        </div>
+        <aside class="urg reveal">
+          <span class="urg-ic"><Icon name="clock" /></span>
+          <h2>Por que agir agora</h2>
+          <p>{area.urgencia}</p>
+          <a class="btn btn-whats" href={wa(area.msg)} target="_blank" rel="noopener" data-track="area-urgencia" data-intent={area.slug}>
+            <Icon name="whatsapp" />Explicar meu caso
+          </a>
+        </aside>
+      </div>
+    </section>
+
+    <section class="a-body">
+      <div class="wrap a-body-grid">
+        <div>
+          <div class="reveal">
+            <span class="eyebrow">Como atuo</span>
+            <h2 class="h-sec">O que faço <em>no seu caso</em></h2>
+          </div>
+          <ul class="checks">
+            {area.atuacao.map((item) => <li class="reveal"><Icon name="check" />{item}</li>)}
+          </ul>
+
+          <div class="a-faq">
+            <span class="eyebrow reveal">Dúvidas frequentes</span>
+            <h2 class="h-sec reveal">Perguntas sobre <em>{area.t.toLowerCase()}</em></h2>
+            <div class="faq-list">
+              {area.faq.map((f, i) => (
+                <details class="qa reveal" open={i === 0}>
+                  <summary>{f.q}<Icon name="plus" /></summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <aside class="a-side">
+          <figure class="a-photo reveal">
+            <Image src={drAtendimento} alt="Dr. Gennisis Meirelis em atendimento no escritório" widths={[360, 560]} sizes="(max-width: 900px) 90vw, 360px" />
+            <figcaption>
+              <strong>{site.lawyer}</strong>
+              <small>Advogado criminalista · {site.oab}</small>
+            </figcaption>
+          </figure>
+          <div class="cities reveal">
+            <h3><Icon name="pin" />Onde atendo</h3>
+            <p>{cidades.join(' · ')} e toda a Região Metropolitana de Curitiba. Atendimento online para outras localidades.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="a-final">
+      <div class="wrap">
+        <div class="final-card reveal">
+          <span class="live"><i></i>Plantão criminal 24 horas</span>
+          <h2 class="h-display">Fale agora com <em>quem vai te defender.</em></h2>
+          <p>Você fala direto com o {site.lawyer}, com o sigilo e a seriedade que o seu caso exige.</p>
+          <div class="a-ctas center">
+            <a class="btn btn-whats btn-lg" href={wa(area.msg)} target="_blank" rel="noopener" data-track="area-final" data-intent={area.slug}>
+              <Icon name="whatsapp" />Falar no WhatsApp
+            </a>
+            <a class="btn btn-ghost btn-lg" href={tel} data-track="area-final" data-intent={area.slug}><Icon name="phone" />Ligar agora</a>
+          </div>
+        </div>
+
+        <nav class="others" aria-label="Outras áreas de atuação">
+          <h2>Outras áreas de atuação</h2>
+          <div>
+            {outras.map((o) => <a href={`/atuacao/${o.slug}/`}>{o.t}<Icon name="arrow" /></a>)}
+          </div>
+        </nav>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Base>
+
+<style>
+  .a-hero { padding: 128px 0 72px; background: radial-gradient(ellipse at 80% 0%, rgba(210, 168, 102, .12), transparent 55%); }
+  .a-hero-grid { display: grid; grid-template-columns: 1.3fr .7fr; gap: 56px; align-items: center; }
+  .crumbs { font-size: 13px; color: var(--ink-3); margin-bottom: 22px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .crumbs a:hover { color: var(--ink); }
+  .a-h1 { font-size: clamp(38px, 5.2vw, 64px); margin-top: 18px; }
+  .a-h1 :global(em) { font-style: italic; color: var(--gold-2); }
+  .a-intro { color: var(--ink-2); font-size: 19px; max-width: 640px; margin-top: 20px; }
+  .a-ctas { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
+  .a-ctas.center { justify-content: center; }
+  .trust { list-style: none; display: flex; flex-wrap: wrap; gap: 12px 26px; margin-top: 28px; font-size: 14px; color: var(--ink-2); }
+  .trust li { display: inline-flex; align-items: center; gap: 8px; }
+  .trust li > :global(svg) { width: 18px; height: 18px; color: var(--gold); }
+
+  .urg { padding: 30px; border-radius: var(--r-lg); border: 1px solid var(--gold-line); background: linear-gradient(170deg, rgba(210, 168, 102, .14), rgba(210, 168, 102, .02)); }
+  .urg-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--gold-soft); color: var(--gold-2); }
+  .urg-ic :global(svg) { width: 24px; height: 24px; }
+  .urg h2 { font-family: var(--font-display); font-size: 28px; font-weight: 600; margin: 18px 0 10px; }
+  .urg p { color: var(--ink-2); font-size: 16px; }
+  .urg .btn { margin-top: 22px; width: 100%; }
+
+  .a-body { background: var(--bg-2); }
+  .a-body-grid { display: grid; grid-template-columns: 1fr 360px; gap: 64px; align-items: start; }
+  .checks { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 36px; }
+  .checks li { display: flex; gap: 12px; padding: 18px 20px; border-radius: var(--r); background: var(--bg); border: 1px solid var(--line); font-size: 15px; }
+  .checks li :global(svg) { width: 20px; height: 20px; flex: none; color: var(--whats); margin-top: 2px; }
+  .a-faq { margin-top: 80px; }
+  .a-faq .faq-list { margin-top: 32px; }
+  .faq-list { display: grid; gap: 12px; }
+  .qa { border-radius: var(--r); border: 1px solid var(--line); background: var(--bg); transition: border-color .2s; }
+  .qa[open] { border-color: var(--gold-line); }
+  .qa summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 22px 24px; font-weight: 600; font-size: 17px; }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa summary :global(svg) { width: 20px; height: 20px; flex: none; color: var(--gold); transition: transform .25s; }
+  .qa[open] summary :global(svg) { transform: rotate(45deg); }
+  .qa p { padding: 0 24px 22px; color: var(--ink-2); font-size: 16px; }
+
+  .a-side { position: sticky; top: 100px; display: grid; gap: 16px; }
+  .a-photo { border-radius: var(--r-lg); overflow: hidden; border: 1px solid var(--line-2); background: var(--bg); }
+  .a-photo img { aspect-ratio: 4/4.4; object-fit: cover; width: 100%; }
+  .a-photo figcaption { padding: 18px 20px; display: grid; gap: 2px; }
+  .a-photo strong { font-family: var(--font-display); font-size: 22px; font-weight: 600; }
+  .a-photo small { color: var(--ink-3); font-size: 13px; }
+  .cities { padding: 22px; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--bg); }
+  .cities h3 { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+  .cities h3 :global(svg) { width: 18px; height: 18px; color: var(--gold); }
+  .cities p { color: var(--ink-2); font-size: 14px; margin-top: 8px; }
+
+  .final-card { text-align: center; padding: 72px 32px; border-radius: 28px; border: 1px solid var(--gold-line);
+    background: radial-gradient(ellipse at 50% 0%, rgba(210, 168, 102, .2), transparent 60%), var(--bg-2); }
+  .final-card h2 { font-size: clamp(36px, 4.8vw, 60px); margin-top: 18px; }
+  .final-card p { color: var(--ink-2); font-size: 18px; max-width: 560px; margin: 18px auto 0; }
+  .others { margin-top: 64px; }
+  .others h2 { font-size: 12px; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .others div { display: flex; flex-wrap: wrap; gap: 10px; }
+  .others a { display: inline-flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 999px; border: 1px solid var(--line-2); font-size: 14px; transition: border-color .2s, background .2s; }
+  .others a:hover { border-color: var(--gold-line); background: var(--gold-soft); }
+  .others a :global(svg) { width: 14px; height: 14px; color: var(--gold); }
+
+  @media (max-width: 960px) {
+    .a-hero-grid, .a-body-grid { grid-template-columns: 1fr; gap: 40px; }
+    .a-side { position: static; grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .a-hero { padding-top: 104px; }
+    .a-ctas .btn { width: 100%; }
+    .checks { grid-template-columns: 1fr; }
+    .a-side { grid-template-columns: 1fr; }
+    .final-card { padding: 56px 18px; }
+  }
+</style>
